@@ -108,13 +108,17 @@ public class CrushMapReduceTest extends HadoopTestCase {
 
 		ORIG_TMP = System.setProperty("java.io.tmpdir", TMP.getRoot().getAbsolutePath());
 
-		File logsDir = TMP.newFolder("logs");
+		try {
+            File logsDir = TMP.newFolder("logs");
 
-		System.setProperty("hadoop.log.dir", logsDir.getAbsolutePath());
+            System.setProperty("hadoop.log.dir", logsDir.getAbsolutePath());
 
-		File dfsDir = TMP.newFolder("dfs");
+            File dfsDir = TMP.newFolder("dfs");
 
-		System.setProperty("test.build.data", dfsDir.getAbsolutePath());
+            System.setProperty("test.build.data", dfsDir.getAbsolutePath());
+        } catch (Exception e) {
+            System.out.println("Error: " + e.toString());
+        }
 	}
 
 	@AfterClass
@@ -809,7 +813,7 @@ public class CrushMapReduceTest extends HadoopTestCase {
 		assertThat(jobCounters.getCounter(ReducerCounter.FILES_CRUSHED),		equalTo( 23L));
 		assertThat(jobCounters.getCounter(ReducerCounter.RECORDS_CRUSHED),	equalTo(964L));
 	}
-	
+
 
 	@Test
 	public void executeIgnoreFile() throws Exception {
@@ -833,12 +837,12 @@ public class CrushMapReduceTest extends HadoopTestCase {
 			"--output-format=text",
 			"--compress=none",
 			"--ignore-regex=.*9[0-9]",
-			
+
 			"in_skip_test", "out_skip_test", "20101116153015"
 		});
 
 		verifyOutput(homeDir + "/out_skip_test", "crushed_file-*-*-*", Format.TEXT, Format.TEXT, null, "file10", "file11", "file12");
-		
+
 	}
 
 	/**
@@ -962,7 +966,7 @@ public class CrushMapReduceTest extends HadoopTestCase {
 				Path path = new Path(dir + "/" + crushOutMask);
 
 				FileStatus[] globStatus = getFileSystem().globStatus(path);
-				
+
 				if (globStatus == null || 1 != globStatus.length || globStatus[0].isDir()) {
 					fail(crushOutMask + " was not found in " + path);
 				}

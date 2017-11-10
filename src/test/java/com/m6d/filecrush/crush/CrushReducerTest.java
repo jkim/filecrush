@@ -55,8 +55,12 @@ public class CrushReducerTest {
 		job.set("mapred.tip.id", "task_201011081200_014527_r_001234");
 		job.set("mapred.task.id", "attempt_201011081200_14527_r_001234_0");
 
-		outDir = tmp.newFolder("out");
-		tmp.newFolder("out/_temporary");
+        try {
+            outDir = tmp.newFolder("out");
+            tmp.newFolder("out/_temporary");
+        } catch (Exception e) {
+            System.out.println("Error: " + e.toString());
+        }
 
 		job.set("mapred.output.dir", outDir.getAbsolutePath());
 
